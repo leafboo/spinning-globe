@@ -1,5 +1,7 @@
 import time
-import sys
+import curses
+from curses import wrapper
+
 
 globe = [""" 
               _-o#&&*''''?d:>b)_
@@ -17,7 +19,7 @@ MMMMMb_                   |MMMMMMMMMMMP'     :
 HMMMMMMMHo                 `MMMMMMMMMT       .
 ?MMMMMMMMP                  9MMMMMMMM}       -
 -?MMMMMMM                  |MMMMMMMMM?,d-    '
-:|MMMMMM-                 `MMMMMMMT .M|.   :
+ :|MMMMMM-                 `MMMMMMMT .M|.   :
   .9MMM[                    &MMMMM*' `'    .
   :9MMk                    `MMM#"        -
     &M}                     `          .-
@@ -42,7 +44,7 @@ d"Z).               9MMMMMMMMMMMMMMMMM[HMM|:
 :|MMMMMMMMMMHo                 `9MMMMMMMM'   .
 . HMMMMMMMMMMP'                 !MMMMMMMM    `
 - `#MMMMMMMMM                   HMMMMMMM*,/  :
-:  ?MMMMMMMF                   HMMMMMM',P' :
+ :  ?MMMMMMMF                   HMMMMMM',P' :
   .  HMMMMR'                    {MMMMP' ^' -
   : `HMMMT                     iMMH'     .'
     -.`HMH                               .
@@ -67,7 +69,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 :  |MMMMMMMMMMMMMb)                 TMMMMMMT :
 .   ?MMMMMMMMMMMMM'                 :MMMMMM|.`
 -    ?HMMMMMMMMMM:                  HMMMMMM)|:
-:     9MMMMMMMMH'                 `MMMMMP.P.
+ :    9MMMMMMMMH'                  `MMMMMP.P.
   .    `MMMMMMT''                   HMMM*''-
   -    TMMMMM'                     MM*'  -
     '.   HMM#                            -
@@ -92,9 +94,9 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 -     |MMMMMMMMMMMMMMHb,               `MMMMM|
 :      |MMMMMMMMMMMMMMH'                &MMMM,
 -       `#MMMMMMMMMMMM                 |MMMM6-
-:        `MMMMMMMMMM+                 ]MMMT/
+:        `MMMMMMMMMM+                  ]MMMT/
   .       `MMMMMMMP"                   HMM*`
-  -       |MMMMMH'                   ,M#'-
+  -       |MMMMMH'                    ,M#'-
     '.     :MMMH|                       .-
       .     |MM                        -
       ` .   `#?..    .             ..'
@@ -117,7 +119,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 :             |MMMMMMMMMMMMMMMM#)           :M
 -              `HMMMMMMMMMMMMMMM'           |T
 :               `*HMMMMMMMMMMMM'            H'
-:                 MMMMMMMMMMM|            |T
+ :                 MMMMMMMMMMM|            |T
   .                MMMMMMMM?'             ./
   `.               MMMMMMH'              ./
     -.            |MMMH#'                .
@@ -142,7 +144,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 :                  4MMMMMMMMMMMMMMMHo        |
 :                   ?MMMMMMMMMMMMMMM?        :
 -.                   `#MMMMMMMMMMMM:        .-
-:                     |MMMMMMMMMM?         .
+ :                     |MMMMMMMMMM?         .
   -                    JMMMMMMMT'          :
   `.                   MMMMMMH'           -
     -.                |MMM#*`            -
@@ -167,7 +169,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 :                       HMMMMMMMMMMMMMM#,    :
 :                        9MMMMMMMMMMMMMH'    .
 : .                       *HMMMMMMMMMMP     .'
-:                          MMMMMMMMMH'     .
+ :                          MMMMMMMMMH'     .
   -                        :MMMMMMM'`      .
   `.                       9MMMMM*'       -
     -.                    {MMM#'         :
@@ -192,9 +194,9 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 -                           .HMMMMMMMMMMMMb  :
 :                            `MMMMMMMMMMMMH  .
 -:  .                         `#MMMMMMMMMP   '
-:                              ]MMMMMMMH'  :
+ :                              ]MMMMMMMH'  :
   -                            ,MMMMMM?'   .
-  `:                           HMMMMH"    -
+  `:                           HMMMMH"    -'
     -.                       .HMM#*     .-
     `.                     .HH*'     .
       `-.                  &R".    .-
@@ -217,7 +219,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 : '                              4MMMMMMMMMMH`
 :   .                             9MMMMMMMMMT-
 :.`                               `#MMMMMMMH '
-:      '                           HMMMMMH':
+ :      '                           HMMMMMH':
   -                                |MMMMH" -
   `:                              |MMMH*' .'
     '?                           dMM#'   .
@@ -243,7 +245,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 :   -                                |MMMMMMMM
 ?                                     HMMMMMMP
 -- . '                                |HMMMMM'
-:.`     .  '                          JMMMM+
+ :.`     .  '                          JMMMM+
   )                                   ,MMMP:
   :                                 |MMH?:
     -:).                            dM#" .
@@ -268,7 +270,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 /.      -                               -MMMMM
 )`.                                      9MMMP
 :. .  . -                                |MMM'
-)... '                                  .MMT
+ )... '                                  .MMT
   &.                                    .dMP
   ),                                  .HM*
     ). `).                            ,H&'
@@ -294,7 +296,7 @@ JL/"7+,.                `MMMMMMMMMMMMMMMH9ML
 Mb).                                       {MM
 ::.`-       -                              !MP
 `&.   .  .  -                              :M'
-9H,  )  '                                 |T
+ 9H,  )  '                                 |T
   HM?                                     ,P
   *ML                                   ??
     :&.   `o                           .d'
@@ -631,6 +633,106 @@ SMMMMMMH'                   '9M_-MMH::-)v_   :
        ` .               -          .-
           ` .                    .-
               ' -==pHMMH##HH#"'"
+    """,
+    """
+              _..-:b&::&?&&##bo_
+          ...?-#&9MMMMMMMMMMMMMMMHo_
+       .. .1&#MMHMMMMMMMMMMMMMMMMMMMHo.
+     .  .o/##R9MMMMMMMMMMMMMMMMMMMMMMMM?.
+    .- |MSd?|'`$?#HMMMMMMMMMMMMMMMMMMMMMH)
+   -  dMMMMHbd##oodMMMM#MMMMMMMMMMMMMMMMMH:
+  - JMMMMMMMMMMMMM7HMMMH$SR***MMMMMMMMMMMMb>
+ : {MMMMMMMMMMMMMMM`9MMMMMH'  ``HMMM?"*MM[| :
+- |MMMMMMMMMMMMMMMMM<MH*''      `MM'   'HM? |.
+: `MMMMMMMMMMMMMMMMMM##H-'       `#,  ` |`? /|
+.  ?)")")"?HMMMMMMMMMMMMMH'        "    v& .}?  
+-       |MMMMMMMMMMMP'                  `H:&H&
+i       `9MMMMMMMMMT                    `|?)"?
+:         MMMMMMMMMH                      )"`)
+:         MMMMMMMMMH-.dH                    ,|
+  :        ?MMMMMMM?  {M' .               .dT
+  .        ?MMMMMR'  `'                  ,MP'
+    -        `HMM#'                     .&*'
+    '.        '                         `.
+      -                               . '
+        `..                         .-'
+            -.                   .-`
+               '-.==p##HMMHp&#"'"'
+    """,
+    """
+              _v---:?&?:?&?&#b)_
+          ..' i: #M$MMMMMMMMMMMMMHo_
+       ..   -]M#HMHMMMMMMMMMMMMMMMMMHo.
+     .     ooP*&6&MMMMMMMMMMMMMMMMMMMMM?.
+    . -   &Rbbd-/`?:##HMMMMMMMMMMMMMMMMMH?
+   -    ,HMMMMM#od#boodMMMMHMMMMMMMMMMMMMMb
+  -   iMMMMMMMMMMMMMMM[*MMMH&$R***MMMMMMMMMb
+ :   |MMMMMMMMMMMMMMMMML"MMMMMM'  ``MMMP"HMM:
+.    HMMMMMMMMMMMMMMMMMMb/MH)")"    `MR   *M,|
+:    TMMMMMMMMMMMMMMMMMMMMd#&`       `D.   ?|)
+.     `*)"')"*HMMMMMMMMMMMMMMP'        '  -d,J
+:           |MMMMMMMMMMMMP'                ||M
+M,           ?MMMMMMMMMM|                  `)?
+&|            HMMMMMMMMM}                   ``
+`L           .MMMMMMMMMMP ,d|                :
+ *.           ?MMMMMMMF' .MP                /
+  |            TMMMMMM'  `)"'               /
+  `.            `MMMP'                   ./
+    -.           `                       .
+      .                               . '
+        - .                         .-'
+           -)                   ..-`
+              '-..=p####HMH&="'"'
+    """,
+    """
+              _vo~^'':&b::d,#b)_
+          ..`" `:v +9P]MMMMMMMMMMHo_
+        ,-     ?Mb#MMMMMMMMMMMMMMMMMHo.
+     . "     ,ooM*&&&HMMMMMMMMMMMMMMMMHb.
+    .   -    99Soo?|'`*?##HMMMMMMMMMMMMMH)
+   -       .HMMMMMM#od#boodMMMMHMMMMMMMMMMb
+  -      :MMMMMMMMMMMMMMMM67HMMH&$R**HMMMMMb
+ :      .MMMMMMMMMMMMMMMMMMM/HMMMMM|  `9MM'HL
+:       {MMMMMMMMMMMMMMMMMMMM)MM*''    `H[ `9|
+|       `HMMMMMMMMMMMMMMMMMMMMb##|      `F. :?
+H        `"*"'"`#MMMMMMMMMMMMMMM?         '  k
+M.               MMMMMMMMMMMMM"'             H
+MMH.             `HMMMMMMMMMM:               |
+&MM|              `MMMMMMMMMM,               -
+`MM|              dMMMMMMMMMM|.oH            :
+ 9ML              `HMMMMMMM?  dH'            -
+  Hi               |MMMMMMP   "'            .'
+   T.               `MMM#'                 -'
+    `.               `                   .`
+      `                                -'
+        `.. .                       ..'
+            ...                  .-'
+              '-. //######M#b~""'
+    """, 
+    """
+              _ooq=""''$b$_&?b)_
+          .-`^"  "'o |&M:MMMMMMMMHo_
+        o/'      -$Mb#MMMMMMMMMMMMMMHo.
+      /'        .ooHP*&R&MMMMMMMMMMMMMM?.
+    .'          `MRbod?|'`+?##9MMMMMMMMMH)
+  .`          .,MMMMMMH#od##obdMMMMHMMMMMMb
+  -          ?MMMMMMMMMMMMMMMMM$HMMH$ZP*HMMb
+ ?          |MMMMMMMMMMMMMMMMMMM|9MMMMP  "M6)
+.-          dMMMMMMMMMMMMMMMMMMMMb]M*'    |R |
+1|          `HMMMMMMMMMMMMMMMMMMMMMd#|     ?,:
+MH,          ``*""'"*#MMMMMMMMMMMMMM*       '`
+MM6_                 |MMMMMMMMMMMMH"         :
+MMMMMb.               "MMMMMMMMMMT           -
+&MMMMM'                |MMMMMMMMMH           `
+!MMMMb                .HMMMMMMMMM+.?&        :
+ TMMMM                 *MMMMMMMP  dH' .     :
+  9MM'                 `MMMMMMP'  "'       .'
+   9ML                  `MMM#'            -'
+    `H                   `               :
+      `).                              .'
+        `-)  .                      .-'
+          ' ._                   .-`
+              '-). ,b#####p&**^`'
     """
 
 
@@ -639,16 +741,19 @@ SMMMMMMH'                   '9M_-MMH::-)v_   :
   ]
 
 
- 
-  
-while True:
+def main(stdscr):
+  stdscr = curses.initscr()
+  curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+  while True:
 
-  for i in range(len(globe)):
-    sys.stdout.write(globe[i])
-    sys.stdout.flush() # hit send
+    for i in range(len(globe)):
+      stdscr.clear()
 
-    time.sleep(.2)
+      stdscr.addstr(0, 0, globe[i], curses.color_pair(1))
+      stdscr.refresh()
 
-    sys.stdout.write("\033[H\033[J")
-    sys.stdout.flush()
+      time.sleep(.1)
+
+  stdscr.getch()
+wrapper(main)
 
