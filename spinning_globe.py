@@ -2,6 +2,8 @@ import time
 import curses
 from curses import wrapper
 
+# This comment is just for a commit to push to github to fix not successful push in my linux setup
+
 
 globe = [""" 
               _-o#&&*''''?d:>b)_
